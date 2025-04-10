@@ -13,14 +13,18 @@
   },
   "dependencies": {
     "@arcana/ca-sdk": "^0.0.5",
-    "@headlessui/react": "^1.7.3",
+    "@arcana/ca-wagmi": "^0.0.6",
+    "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.0.12",
     "@privy-io/react-auth": "2.4.5",
     "@privy-io/server-auth": "1.18.12",
+    "@privy-io/wagmi": "^1.0.3",
     "@tailwindcss/forms": "^0.5.3",
+    "@tanstack/react-query": "^5.71.1",
     "next": "latest",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "wagmi": "^2.14.16"
   },
   "devDependencies": {
     "@tsconfig/next": "^2.0.0",

@@ -91,10 +91,14 @@ let caIntent: {
 let state: {
   inProgress: boolean;
   completed: boolean;
+  intentHash: string | "",
+  explorerURL: string | "",
   steps: Array<ProgressStep & { done: boolean }>;
 } = {
   inProgress: false,
   completed: false,
+  intentHash: "",
+  explorerURL: "",
   steps: [],
 };
 
@@ -121,8 +125,16 @@ export const eventListener = async (data: any) => {
       if (data.data.typeID == "IF") {
         await caSDK?.getUnifiedBalances().then((res) => {
           console.log("balance refreshed: ", res);
+          state.completed = true;
+          state.inProgress = false;
           balance = res;
         });
+      }
+      if (data.data.typeID == "IS") {
+        state.intentHash = data.data.data.intentHash;
+        state.explorerURL = data.data.data.explorerURL;
+        console.log("intent hash: ", state.intentHash);
+        console.log("explorer URL: ", state.explorerURL);
       }
       break;
     }
@@ -170,11 +182,19 @@ const useCaSdkAuth = async () => {
 };
 
 const useBalance = (refresh: boolean = false) => {
+  console.log("refresh: ", refresh)
   if (refresh && caSDK != null) {
-    useCaSdkAuth();
+    caSDK.getUnifiedBalances().then((res) => {
+      balance = res;
+      console.log("balance refreshed: ", res);
+    });
   }
   return balance;
 };
+
+const useTransfer = (to: string, amount: string|number, token: string, chain: number ) => {
+  return caSDK?.transfer().to(`0x${to}`).amount(amount).chain(chain).token(token).exec();
+}
 
 const useBridge = (
   amount: string | number,
@@ -224,6 +244,14 @@ const clearCaAllowance = () => {
   allowance.values = [];
 };
 
+const clearCaState = () => {
+  state.inProgress = false;
+  state.completed = false;
+  state.intentHash = "";
+  state.explorerURL = "";
+  state.steps = [];
+};
+
 const useCaState = () => {
   return state;
 };
@@ -238,5 +266,7 @@ export {
   useCaIntent,
   clearCaIntent,
   useCaState,
+  useTransfer,
   clearCaAllowance,
+  clearCaState,
 };
